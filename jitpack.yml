@@ -1,3 +1,8 @@
-install: 
-FILE="-Dfile=VBot-Android-SDK.aar"
-  mvn install:install-file $FILE -DgroupId=com.vpmedia -DartifactId=sdkvbot -Dversion=1.0.1 -Dpackaging=aar -DpomFile=pom.xml
+# configuration file for building snapshots and releases with jitpack.io
+jdk:
+  - openjdk17
+before_install:
+  - ./scripts/prepareJitpackEnvironment.sh
+install:
+  - FILE="-Dfile=VBot-Android-SDK.aar"
+  - mvn install:install-file $FILE -DgroupId=com.github.kiendtvpm -DartifactId=VBot_SDK_Android -Dversion=1.0.1 -Dpackaging=aar -DgeneratePom=true
