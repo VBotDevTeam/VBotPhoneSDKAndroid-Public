@@ -3,7 +3,7 @@
 - **Package:** `com.vpmedia.sdkvbot`
 - **Điểm vào chính:** `com.vpmedia.sdkvbot.client.VBotClient`
 - **minSdk:** 23 · **compileSdk:** 34 · **Ngôn ngữ:** Kotlin/Java
-- **Phiên bản hiện tại:** `1.1.0`
+- **Phiên bản hiện tại:** `1.1.1`
 
 ## Cài đặt
 
@@ -26,7 +26,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation 'com.github.VBotDevTeam:VBotPhoneSDKAndroid-Public:1.1.0'
+    implementation 'com.github.VBotDevTeam:VBotPhoneSDKAndroid-Public:1.1.1'
 }
 ```
 
@@ -86,14 +86,14 @@ Kế thừa `ClientListener` (open class), override phương thức cần dùng:
 import com.vpmedia.sdkvbot.client.ClientListener
 import com.vpmedia.sdkvbot.en.AccountRegistrationState
 import com.vpmedia.sdkvbot.en.CallState
-import com.vpmedia.sdkvbot.en.EndCallReason
+import com.vpmedia.sdkvbot.en.VBotEndCallReason
 
 private val listener = object : ClientListener() {
     override fun onUserConnected(displayName: String) {}
     override fun onCallState(state: CallState) {
         // Null, Calling, Incoming, Early, Connecting, Confirmed, Disconnected
     }
-    override fun onCallEnded(reason: EndCallReason) { /* reason.code / reason.name */ }
+    override fun onCallEnded(reason: VBotEndCallReason) { /* reason.code / reason.description */ }
     override fun onExternalCallId(externalCallId: String) { /* fire khi có cuộc gọi ĐẾN */ }
     override fun onCallMuteStateChanged(muted: Boolean) {}
     override fun onNetworkUnreachable() {}
@@ -124,7 +124,7 @@ client.connect(token = "vbot-token", tokenFirebase = "fcm-token") { displayName,
 val externalCallId = generateId() // tối đa 32 ký tự [a-z0-9]
 client.startOutgoingCall(hotline = "1900xxxx", phone = "0901234567", externalCallId = externalCallId) { _, error ->
     if (error != null) {
-        // thất bại trước khi đổ chuông (vd: register timeout, AnotherCallInProgress)
+        // thất bại trước khi đổ chuông (vd: register timeout, anotherCallInProgress)
     }
 }
 ```
@@ -147,7 +147,7 @@ override fun onMessageReceived(message: RemoteMessage) {
 }
 ```
 
-- `offCall == "0"`: hiện notification cuộc gọi đến + chuẩn bị. Nếu không register được trong **20 giây** → `onCallEnded(IncomingCallTimeout)` + tự dọn.
+- `offCall == "0"`: hiện notification cuộc gọi đến + chuẩn bị. Nếu không register được trong **20 giây** → `onCallEnded(incomingCallTimeout)` + tự dọn.
 - `offCall != "0"`: cuộc gọi đã bị huỷ từ xa → huỷ chuẩn bị, gỡ notification.
 
 > SDK không khai `FirebaseMessagingService` — app của bạn sở hữu service và tự route payload noticall vào `notificationCall(map)`, nên không tranh chấp `MESSAGING_EVENT` với `firebase_messaging` sẵn có.
@@ -192,6 +192,40 @@ client.disconnect { _, error ->
     // credential luôn được xoá cục bộ dù server logout lỗi hay không
 }
 ```
+
+## VBotEndCallReason
+
+Nguyên nhân kết thúc cuộc gọi, nhận qua `onCallEnded`. Mỗi case có `.code` (mã số) và `.description` (mô tả).
+
+| Case | code | Ý nghĩa |
+|---|---|---|
+| `normaly` | 1000 | Cuộc gọi kết thúc bình thường |
+| `busy` | 1001 | Máy bận |
+| `timeOut` | 1004 | Hết thời gian chờ kết nối |
+| `noPushToken` | 1018 | Chưa đăng ký push notification |
+| `notReadyForStartCall` | 2002 | Chưa sẵn sàng để gọi đi / khởi tạo không thành công |
+| `invalidPhoneNumber` | 2004 | Số điện thoại không hợp lệ |
+| `noDataFromServer` | 2005 | Không có dữ liệu từ máy chủ |
+| `endCallBeforeServerStartCall` | 2006 | Cuộc gọi kết thúc khi chưa kết nối |
+| `noSIPCallCreated` | 2007 | Lỗi khi khởi tạo cuộc gọi |
+| `dataInvalid` | 2008 | Dữ liệu không hợp lệ |
+| `noVBotSIPUser` | 2009 | Không tìm thấy thông tin tài khoản |
+| `authenticatedFailed` | 2010 | Xác thực thất bại |
+| `anotherCallInProgress` | 2011 | Đang có cuộc gọi khác |
+| `decline` | 2013 | Từ chối cuộc gọi |
+| `temporarilyUnavailable` | 2014 | Không liên lạc được |
+| `reportNewIncomingCallFailed` | 2016 | Không thể tiếp nhận cuộc gọi đến |
+| `alertDataNotFound` | 2017 | Dữ liệu thông báo không hợp lệ |
+| `setupSIPEndpointFailed` | 2019 | Khởi tạo dịch vụ gọi thất bại |
+| `requestCallKitActionFailed` | 2020 | Thực thi hành động cuộc gọi thất bại |
+| `noSIPAccount` | 2022 | Tài khoản chưa được cấu hình |
+| `incomingCallTimeout` | 2023 | Cuộc gọi đến hết thời gian chờ |
+| `unknownError` | 9996 | Lỗi chưa xác định |
+| `microphonePermissionDenied` | 9999 | Chưa cấp quyền microphone |
+
+Bảng mã trên cũng dùng cho `VBotError.code` trả về từ các hàm có completion.
+
+> Tên case và mã số giống hệt `VBotEndCallReason` của iOS SDK, nên logic xử lý mã lỗi dùng chung được cho cả hai nền tảng.
 
 ## Java interop
 
