@@ -2,6 +2,44 @@
 
 Các thay đổi của VBot Phone SDK Android.
 
+## 1.1.2
+
+_Ngày phát hành: 03/08/2026_
+
+### Tính năng mới
+
+- Callback mới `onCallEnded(reason: VBotEndCallReason, endedBy: VBotCallEndParty)` cho biết nguyên nhân và bên kết thúc cuộc gọi. Callback một tham số cũ vẫn tương thích ngược.
+
+### VBotEndCallReason mới
+
+| reason                     | SIP |
+| -------------------------- | --- |
+| `incorrectInformation`     | 400 |
+| `unauthenticated`          | 401 |
+| `insufficientBalance`      | 402 |
+| `recipientBlocksCalls`     | 403 |
+| `destinationNotFound`      | 404 |
+| `callIntervalNotAllowed`   | 405 |
+| `memberNotActivated`       | 406 |
+| `memberNotInProject`       | 407 |
+| `doNotDisturb`             | 409 |
+| `destinationGone`          | 410 |
+| `recipientAbsent`          | 411 |
+| `packageExpired`           | 412 |
+| `hotlineTelcoNotSupported` | 413 |
+| `telcoNotFound`            | 414 |
+| `invalidParameter`         | 415 |
+| `projectExpired`           | 416 |
+| `callerCanceled`           | 487 |
+| `connectionError`          | 500 |
+| `transmissionError`        | 502 |
+
+### Cập nhật dependency
+
+```groovy
+implementation 'com.github.VBotDevTeam:VBotPhoneSDKAndroid-Public:1.1.2'
+```
+
 ## 1.1.1
 
 _Ngày phát hành: 30/07/2026_
