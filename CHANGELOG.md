@@ -2,6 +2,21 @@
 
 Các thay đổi của VBot Phone SDK Android.
 
+## 1.1.3
+
+_Ngày phát hành: 11/09/2026_
+
+### Tính năng mới & Cải tiến
+
+- Bổ sung các sự kiện mới vào `VBotEndCallReason`.
+- Xử lý rớt mạng.
+
+### Cập nhật dependency
+
+```groovy
+implementation 'com.github.VBotDevTeam:VBotPhoneSDKAndroid-Public:1.1.3'
+```
+
 ## 1.1.2
 
 _Ngày phát hành: 03/08/2026_
