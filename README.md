@@ -3,7 +3,7 @@
 - **Package:** `com.vpmedia.sdkvbot`
 - **Điểm vào chính:** `com.vpmedia.sdkvbot.client.VBotClient`
 - **minSdk:** 23 · **compileSdk:** 34 · **Ngôn ngữ:** Kotlin/Java
-- **- **Phiên bản hiện tại:** `1.1.4`
+- **Phiên bản hiện tại:** `1.1.4`
 
 ## Cài đặt
 
