@@ -2,6 +2,20 @@
 
 Các thay đổi của VBot Phone SDK Android.
 
+## 1.1.4
+
+_Ngày phát hành: 15/09/2026_
+
+### Tính năng mới & Cải tiến
+
+- Hỗ trợ chuẩn **16 KB page size** cho Android 15+.
+
+### Cập nhật dependency
+
+```groovy
+implementation 'com.github.VBotDevTeam:VBotPhoneSDKAndroid-Public:1.1.4'
+```
+
 ## 1.1.3
 
 _Ngày phát hành: 11/09/2026_
